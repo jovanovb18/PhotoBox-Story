@@ -89,7 +89,45 @@
   }
   .navlinks a:hover{color:var(--ink);border-color:var(--gold);}
   .navlinks-mobile-hide{display:flex;}
-  @media (max-width:840px){.navlinks-mobile-hide{display:none;}}
+  @media (max-width:840px){
+    .navlinks-mobile-hide{display:none;}
+    .nav{
+      padding:12px 16px;
+      gap:12px;
+    }
+    .logo{
+      font-size:18px;
+      flex-shrink:0;
+    }
+    .nav-cta{
+      padding:8px 14px;
+      font-size:10px;
+      letter-spacing:.06em;
+      background:transparent;
+      color:var(--ink);
+      border:1px solid var(--ink);
+      white-space:nowrap;
+      flex-shrink:0;
+    }
+    .nav-cta:hover{
+      background:var(--ink);
+      color:var(--paper);
+      border-color:var(--ink);
+    }
+  }
+  @media (max-width:400px){
+    .logo{font-size:16px;}
+    .nav-cta{padding:7px 11px;font-size:9px;}
+  }
+
+  @media (max-width:560px){
+    .hero{padding:36px 0 28px;}
+    .hero h1{font-size:clamp(36px,11vw,56px);}
+    .hero-ctas .btn{padding:12px 18px;font-size:11px;}
+    .hero-stats{gap:18px;flex-wrap:wrap;}
+    .wrap{padding:0 18px;}
+  }
+
 
   /* ---------- HERO ---------- */
   .hero{
@@ -383,7 +421,7 @@
       <a href="#pricing">Цени</a>
       <a href="#book">Резервација</a>
     </nav>
-    <a href="#book" class="btn btn-solid">Резервирај термин</a>
+    <a href="#book" class="btn btn-solid nav-cta">Резервирај</a>
   </div>
 </header>
 
@@ -439,7 +477,7 @@
         <div class="ed-num">Издание бр. 01</div>
         <h3>Свадба</h3>
         <p class="blurb">Насловна страница скроена за вас двајца — имиња, хаштаг и целата приказна, обликувана како свадбеното издание на годината.</p>
-        <div class="ed-price"></div>
+        <div class="ed-price"><span>Од</span><span>6.500 МКД</span></div>
       </div>
 
       <div class="ed-card" data-reveal>
@@ -447,7 +485,7 @@
         <div class="ed-num">Издание бр. 02</div>
         <h3>Роденден</h3>
         <p class="blurb">Крупен наслов, родендендски насловни линии и бар-код — за славеникот и за секој гостин што влегува по него.</p>
-        <div class="ed-price"></div>
+        <div class="ed-price"><span>Од</span><span>5.500 МКД</span></div>
       </div>
 
       <div class="ed-card" data-reveal>
@@ -455,7 +493,7 @@
         <div class="ed-num">Издание бр. 03</div>
         <h3>Матура</h3>
         <p class="blurb">Капа, диплома и насловни линии во златна боја — „иднината почнува сега", токму над главата на матурантот.</p>
-        <div class="ed-price"></div>
+        <div class="ed-price"><span>Од</span><span>5.500 МКД</span></div>
       </div>
 
       <div class="ed-card" data-reveal>
@@ -463,7 +501,7 @@
         <div class="ed-num">Издание бр. 04</div>
         <h3>Стил / Гламур</h3>
         <p class="blurb">Насловна страница со гламур од модна писта — за фирмени забави, годишнини и излегувања. Една вечер, секој е стилска икона.</p>
-        <div class="ed-price"></div>
+        <div class="ed-price"><span>Од</span><span>7.000 МКД</span></div>
       </div>
 
     </div>
@@ -613,7 +651,7 @@
       </div>
       <div class="price-card">
         <div class="price-tag">Цел тираж</div>
-        <h3>Цело издание</h3>
+        <h3>Целото издание</h3>
         <div class="amount">18.000<span> МКД / цел ден</span></div>
         <p>За целодневни прослави и големи локации — совршен за свадби, роденденски забави, дипломски, матурски, момачка, девојачка вечер.</p>
         <ul>
