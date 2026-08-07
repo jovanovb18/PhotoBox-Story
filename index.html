@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="mk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PhotoBox Story — Кабина за фотографии што те носи на насловна страница</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,450;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#151210;
+    --ink-soft:#433d37;
+    --paper:#F6F1E6;
+    --paper-dim:#EDE6D4;
+    --gold:#A9812E;
+    --gold-soft:#C9A45C;
+    --wine:#7C2A2A;
+    --line: rgba(21,18,16,0.14);
+    --shadow: 0 30px 60px -25px rgba(21,18,16,0.35);
+    --serif: 'Fraunces', serif;
+    --sans: 'Inter', sans-serif;
+    --mono: 'Space Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%;display:block;}
+  a{color:inherit;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 28px;}
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--gold);
+    display:flex;align-items:center;gap:10px;
+  }
+  .eyebrow::before{content:"";width:22px;height:1px;background:var(--gold);display:inline-block;}
+  h1,h2,h3{font-family:var(--serif);font-weight:600;margin:0;line-height:1.02;}
+  p{line-height:1.65;color:var(--ink-soft);margin:0;}
+  .btn{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    padding:15px 26px;
+    border-radius:2px;
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    text-decoration:none;
+    border:1px solid var(--ink);
+    transition:all .25s ease;
+    cursor:pointer;
+  }
+  .btn-solid{background:var(--ink);color:var(--paper);}
+  .btn-solid:hover{background:var(--wine);border-color:var(--wine);}
+  .btn-outline{background:transparent;color:var(--ink);}
+  .btn-outline:hover{background:var(--ink);color:var(--paper);}
+
+  /* ---------- NAV ---------- */
+  header.site{
+    position:sticky;top:0;z-index:50;
+    background:rgba(246,241,230,0.92);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 28px;max-width:1180px;margin:0 auto;
+  }
+  .logo{
+    font-family:var(--serif);font-weight:700;font-size:22px;letter-spacing:.01em;
+  }
+  .logo span{color:var(--gold);}
+  .navlinks{display:flex;gap:32px;align-items:center;}
+  .navlinks a{
+    font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    text-decoration:none;color:var(--ink-soft);
+    border-bottom:1px solid transparent;padding-bottom:3px;
+    transition:.2s;
+  }
+  .navlinks a:hover{color:var(--ink);border-color:var(--gold);}
+  .navlinks-mobile-hide{display:flex;}
+  @media (max-width:840px){.navlinks-mobile-hide{display:none;}}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding:64px 0 40px;
+  }
+  .hero-grid{
+    display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;
+  }
+  @media (max-width:900px){.hero-grid{grid-template-columns:1fr;}}
+  .hero-eyebrow{margin-bottom:22px;}
+  .hero h1{
+    font-size:clamp(48px,7vw,92px);
+    letter-spacing:-0.01em;
+  }
+  .hero h1 em{
+    font-style:italic;font-weight:500;color:var(--gold);
+  }
+  .hero p.lede{
+    font-size:18px;max-width:46ch;margin-top:22px;
+  }
+  .hero-ctas{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap;}
+  .hero-stats{
+    display:flex;gap:34px;margin-top:46px;padding-top:26px;border-top:1px solid var(--line);
+  }
+  .hero-stats div b{
+    display:block;font-family:var(--serif);font-size:26px;font-weight:600;
+  }
+  .hero-stats div span{
+    font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);
+  }
+
+  /* magazine cover crossfade */
+  .cover-stage{
+    position:relative;
+    aspect-ratio:3/4;
+    background:var(--paper-dim);
+    border-radius:2px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    transform:rotate(1.2deg);
+    border:10px solid #fff;
+    outline:1px solid var(--line);
+  }
+  .cover-stage img{
+    position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
+    opacity:0;transition:opacity 1.4s ease;
+  }
+  .cover-stage img.active{opacity:1;}
+  .cover-caption{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    margin-top:16px;padding:0 4px;
+  }
+  .cover-caption .issue{
+    font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(--ink-soft);
+  }
+  .barcode{
+    display:flex;gap:2px;height:24px;align-items:flex-end;
+  }
+  .barcode i{display:block;width:2px;background:var(--paper-dim);}
+
+  /* ---------- SECTION SHARED ---------- */
+  section{padding:104px 0;}
+  .section-head{
+    display:flex;justify-content:space-between;align-items:flex-end;gap:24px;
+    margin-bottom:56px;flex-wrap:wrap;
+  }
+  .section-head h2{font-size:clamp(30px,4vw,46px);max-width:14ch;}
+  .section-head p{max-width:42ch;}
+  .divider{height:1px;background:var(--line);width:100%;}
+
+  /* ---------- EDITIONS ---------- */
+  .editions-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:26px;
+  }
+  @media (max-width:980px){.editions-grid{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:560px){.editions-grid{grid-template-columns:1fr;}}
+  .ed-card{
+    background:var(--paper-dim);
+    border:1px solid var(--line);
+    padding:14px 14px 22px;
+    transition:transform .35s ease, box-shadow .35s ease;
+  }
+  .ed-card:nth-child(odd){transform:rotate(-0.6deg);}
+  .ed-card:nth-child(even){transform:rotate(0.6deg);}
+  .ed-card:hover{transform:rotate(0deg) translateY(-6px);box-shadow:var(--shadow);}
+  .ed-thumb{aspect-ratio:3/4;overflow:hidden;background:var(--paper-dim);margin-bottom:16px;}
+  .ed-thumb img{width:100%;height:100%;object-fit:contain;}
+  .ed-num{font-family:var(--mono);font-size:11px;color:var(--gold);letter-spacing:.08em;}
+  .ed-card h3{font-size:22px;margin-top:6px;}
+  .ed-card p.blurb{font-size:14px;margin-top:8px;}
+  .ed-price{
+    margin-top:14px;font-family:var(--mono);font-size:12px;
+    display:flex;justify-content:space-between;border-top:1px dashed var(--line);padding-top:12px;
+  }
+
+  /* ---------- TOC / HOW IT WORKS ---------- */
+  .toc{border-top:1px solid var(--ink);}
+  .toc-row{
+    display:grid;grid-template-columns:60px 1fr auto;gap:28px;
+    padding:30px 0;border-bottom:1px solid var(--line);
+    align-items:baseline;
+  }
+  .toc-row .no{font-family:var(--mono);color:var(--gold);font-size:14px;}
+  .toc-row h3{font-size:24px;font-weight:600;}
+  .toc-row .desc{grid-column:2/3;margin-top:6px;}
+  .toc-row .pg{font-family:var(--mono);font-size:12px;color:var(--ink-soft);}
+  @media (max-width:640px){
+    .toc-row{grid-template-columns:40px 1fr;}
+    .toc-row .pg{display:none;}
+  }
+
+  /* ---------- GALLERY FILMSTRIP ---------- */
+  .filmstrip{
+    display:flex;gap:18px;overflow-x:auto;padding-bottom:20px;
+    scroll-snap-type:x mandatory;
+  }
+  .filmstrip::-webkit-scrollbar{height:6px;}
+  .filmstrip::-webkit-scrollbar-thumb{background:var(--line);}
+  .film-item{
+    flex:0 0 auto;width:300px;scroll-snap-align:start;
+  }
+  .film-item .frame{
+    aspect-ratio:4/5;overflow:hidden;background:var(--paper-dim);
+    border:8px solid #fff;box-shadow:var(--shadow);
+  }
+  .film-item .frame img{width:100%;height:100%;object-fit:cover;}
+  .film-item .cap{
+    margin-top:12px;font-family:var(--mono);font-size:11px;letter-spacing:.05em;
+    color:var(--ink-soft);text-transform:uppercase;
+  }
+
+  .film-item .frame video{
+    width:100%;height:100%;object-fit:cover;display:block;
+  }
+  .film-item-video{flex:0 0 auto;width:420px;}
+
+  .filmstrip{
+    overflow: hidden !important;
+    display: block !important;
+    padding-bottom: 12px;
+  }
+  .film-track{
+    display: flex;
+    gap: 18px;
+    width: max-content;
+    animation: filmRoll 50s linear infinite;
+  }
+  .film-track:hover{
+    animation-play-state: paused;
+  }
+  @keyframes filmRoll{
+    0%{ transform: translateX(0); }
+    100%{ transform: translateX(-50%); }
+  }
+
+  #gallery .filmstrip{
+    width: 100vw;
+    max-width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    padding-left: 0;
+    padding-right: 0;
+    overflow: hidden !important;
+  }
+  #gallery .film-track{
+    padding-left: 28px;
+  }
+
+
+
+  .filmstrip{
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .filmstrip::-webkit-scrollbar{display:none;height:0;}
+  .film-item .frame img{object-fit:cover;}
+
+  .filmstrip{
+    scroll-behavior:auto;
+  }
+
+
+  /* ---------- PRICING ---------- */
+  .pricing-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:0;
+    border:1px solid var(--ink);
+  }
+  @media (max-width:900px){.pricing-grid{grid-template-columns:1fr;}}
+  .price-card{
+    padding:44px 34px;border-right:1px solid var(--ink);position:relative;
+  }
+  .price-card:last-child{border-right:none;}
+  .price-card.featured{background:var(--ink);color:var(--paper);}
+  .price-card.featured p{color:#cfc7b8;}
+  .price-card.featured .btn-outline{border-color:var(--paper);color:var(--paper);}
+  .price-card.featured .btn-outline:hover{background:var(--paper);color:var(--ink);}
+  .price-tag{
+    font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--gold);position:absolute;top:20px;right:20px;
+  }
+  .price-card h3{font-size:24px;margin-top:6px;}
+  .price-card .amount{
+    font-family:var(--serif);font-size:40px;margin:18px 0 4px;
+  }
+  .price-card .amount span{font-family:var(--mono);font-size:12px;color:inherit;opacity:.6;}
+  .price-card ul{list-style:none;margin:26px 0 30px;padding:0;display:flex;flex-direction:column;gap:11px;}
+  .price-card li{
+    font-size:14px;padding-left:20px;position:relative;
+  }
+  .price-card li::before{
+    content:"—";position:absolute;left:0;color:var(--gold);
+  }
+
+  /* ---------- QUOTES ---------- */
+  .quotes{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:40px;
+  }
+  @media (max-width:900px){.quotes{grid-template-columns:1fr;}}
+  .quote{border-top:2px solid var(--ink);padding-top:20px;}
+  .quote p.q{font-family:var(--serif);font-size:19px;font-style:italic;color:var(--ink);}
+  .quote .who{margin-top:16px;font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--gold);}
+
+  /* ---------- BOOK / CONTACT ---------- */
+  .book{
+    background:var(--ink);color:var(--paper);border-radius:2px;
+    padding:70px 56px;
+    display:grid;grid-template-columns:1fr 1fr;gap:60px;
+  }
+  @media (max-width:900px){.book{grid-template-columns:1fr;padding:44px 26px;}}
+  .book h2{color:var(--paper);font-size:clamp(28px,4vw,42px);max-width:12ch;}
+  .book p{color:#cfc7b8;margin-top:18px;max-width:42ch;}
+  .book-contact{margin-top:32px;display:flex;flex-direction:column;gap:10px;}
+  .book-contact a{
+    font-family:var(--mono);font-size:13px;text-decoration:none;color:var(--paper);
+    border-bottom:1px solid rgba(246,241,230,0.3);padding-bottom:6px;width:fit-content;
+  }
+  .field{margin-bottom:18px;}
+  .field label{
+    display:block;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#a89f8c;margin-bottom:8px;
+  }
+  .field input,.field select,.field textarea{
+    width:100%;background:transparent;border:none;border-bottom:1px solid rgba(246,241,230,0.35);
+    color:var(--paper);font-family:var(--sans);font-size:15px;padding:10px 2px;
+  }
+  .field select option{color:#151210;}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--gold-soft);}
+  .book form .btn-solid{background:var(--gold);border-color:var(--gold);color:var(--ink);margin-top:8px;}
+  .book form .btn-solid:hover{background:var(--gold-soft);}
+
+  .date-row{
+    display:grid;
+    grid-template-columns:1fr 1.4fr 1fr;
+    gap:10px;
+  }
+  .date-row select{
+    width:100%;
+  }
+
+
+  /* ---------- FOOTER ---------- */
+  footer{padding:50px 0 40px;border-top:1px solid var(--line);}
+  .foot-row{
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;
+  }
+  .foot-links{display:flex;gap:24px;font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;}
+  .foot-links a{text-decoration:none;color:var(--ink-soft);}
+  .foot-links a:hover{color:var(--gold);}
+  .foot-fine{margin-top:26px;font-family:var(--mono);font-size:10px;color:var(--ink-soft);opacity:.7;}
+
+  [data-reveal]{
+    opacity:0;transform:translateY(24px);
+    transition:opacity .8s ease, transform .8s ease;
+  }
+  [data-reveal].in{opacity:1;transform:translateY(0);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;animation:none !important;}
+    html{scroll-behavior:auto;}
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="nav">
+    <div class="logo">PHOTOBOX<span>STORY</span></div>
+    <nav class="navlinks navlinks-mobile-hide">
+      <a href="#editions">Изданија</a>
+      <a href="#how">Како функционира</a>
+      <a href="#gallery">Кабината</a>
+      <a href="#pricing">Цени</a>
+      <a href="#book">Резервација</a>
+    </nav>
+    <a href="#book" class="btn btn-solid">Резервирај термин</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow hero-eyebrow">Изнајмување фото-кабина · Штип и низ цела Македонија</div>
+      <h1>Влези внатре.<br>Стани <em>насловна страница.</em></h1>
+      <p class="lede">Кабина обликувана како насловна страница на списание — за свадби, родендени, матури и забави. Избери издание, чекни внатре, а секој гостин си заминува со онаа единствена фотографија што вреди да се чува.</p>
+      <div class="hero-ctas">
+        <a href="#book" class="btn btn-solid">Провери достапност</a>
+        <a href="#editions" class="btn btn-outline">Погледни ги изданијата</a>
+      </div>
+      <div class="hero-stats">
+        <div><b>4</b><span>Изданија</span></div>
+        <div><b>60&nbsp;сек</b><span>Време по гостин</span></div>
+        <div><b>100%</b><span>Спремно за настанот</span></div>
+      </div>
+    </div>
+    <div>
+      <div class="cover-stage" id="coverStage">
+        <img src="assets/img-001.jpg" class="active" alt="Кабина - насловна страница, стилско издание">
+        <img src="assets/img-002.jpg" alt="Кабина - насловна страница, свадбено издание">
+        <img src="assets/img-003.jpg" alt="Кабина - насловна страница, родендендско издание">
+        <img src="assets/img-004.jpg" alt="Кабина - насловна страница, матурско издание">
+      </div>
+      <div class="cover-caption">
+        <div class="issue">ИЗДАНИЕ 01 — СВАДБА · РОДЕНДЕН · МАТУРА · СТИЛ</div>
+        <div class="barcode" aria-hidden="true">
+          <i style="height:100%"></i><i style="height:60%"></i><i style="height:100%"></i><i style="height:40%"></i>
+          <i style="height:80%"></i><i style="height:100%"></i><i style="height:55%"></i><i style="height:90%"></i>
+          <i style="height:70%"></i><i style="height:100%"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="divider"></div></div>
+
+<!-- EDITIONS -->
+<section id="editions">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <h2>Четири изданија.<br>Една кабина.</h2>
+      <p>Секое изнајмување вклучува целосна промена на позадината. Кажи ни за настанот — ние ја обликуваме кабината според него, со насловни линии скроени по мерка.</p>
+    </div>
+    <div class="editions-grid">
+
+      <div class="ed-card" data-reveal>
+        <div class="ed-thumb"><img src="assets/img-005.jpg" alt="Насловна страница - свадбено издание"></div>
+        <div class="ed-num">Издание бр. 01</div>
+        <h3>Свадба</h3>
+        <p class="blurb">Насловна страница скроена за вас двајца — имиња, хаштаг и целата приказна, обликувана како свадбеното издание на годината.</p>
+        <div class="ed-price"><span>Од</span><span>6.500 МКД</span></div>
+      </div>
+
+      <div class="ed-card" data-reveal>
+        <div class="ed-thumb"><img src="assets/img-003.jpg" alt="Насловна страница - родендендско издание"></div>
+        <div class="ed-num">Издание бр. 02</div>
+        <h3>Роденден</h3>
+        <p class="blurb">Крупен наслов, родендендски насловни линии и бар-код — за славеникот и за секој гостин што влегува по него.</p>
+        <div class="ed-price"><span>Од</span><span>5.500 МКД</span></div>
+      </div>
+
+      <div class="ed-card" data-reveal>
+        <div class="ed-thumb"><img src="assets/img-004.jpg" alt="Насловна страница - матурско издание"></div>
+        <div class="ed-num">Издание бр. 03</div>
+        <h3>Матура</h3>
+        <p class="blurb">Капа, диплома и насловни линии во златна боја — „иднината почнува сега", токму над главата на матурантот.</p>
+        <div class="ed-price"><span>Од</span><span>5.500 МКД</span></div>
+      </div>
+
+      <div class="ed-card" data-reveal>
+        <div class="ed-thumb"><img src="assets/img-001.jpg" alt="Насловна страница - стилско издание"></div>
+        <div class="ed-num">Издание бр. 04</div>
+        <h3>Стил / Гламур</h3>
+        <p class="blurb">Насловна страница со гламур од модна писта — за фирмени забави, годишнини и излегувања. Една вечер, секој е стилска икона.</p>
+        <div class="ed-price"><span>Од</span><span>7.000 МКД</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS / TOC -->
+<section id="how" style="padding-top:0;">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <h2>Содржина</h2>
+      <p>Еве како изгледа резервацијата кај PhotoBox Story, чекор по чекор.</p>
+    </div>
+    <div class="toc" data-reveal>
+      <div class="toc-row">
+        <div class="no">01</div>
+        <div><h3>Избери го своето издание</h3><p class="desc">Свадба, роденден, матура или стил — или кажи ни за настанот, а ние дизајнираме уникатна насловна страница специјално за него.</p></div>
+        <div class="pg">Стр. 04</div>
+      </div>
+      <div class="toc-row">
+        <div class="no">02</div>
+        <div><h3>Ја монтираме и обликуваме кабината</h3><p class="desc">Нашиот тим ја монтира конструкцијата на лице место, ги поставува позадината и светлото, и ги проверува сите агли пред да пристигне првиот гостин.</p></div>
+        <div class="pg">Стр. 09</div>
+      </div>
+      <div class="toc-row">
+        <div class="no">03</div>
+        <div><h3>Гостите влегуваат без ограничување</h3><p class="desc">Без лимит на број фотографии. Асистент е тука цела вечер — помага со позирање, печатење и споделување.</p></div>
+        <div class="pg">Стр. 14</div>
+      </div>
+      <div class="toc-row">
+        <div class="no">04</div>
+        <div><h3>Ја добиваш целата галерија</h3><p class="desc">Секоја фотографија стигнува во приватна дигитална галерија во рок од 24 часа — твоја за чување, печатење и споделување.</p></div>
+        <div class="pg">Стр. 21</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <h2>Кабината,<br>одблизу.</h2>
+      <p>Модуларна конструкција 2×2м со текстилни навлаки што се менуваат за момент — направена да патува и да се вклопи каде било, од сала до тераса на покрив.</p>
+    </div>
+    
+  </div>
+  <div class="filmstrip" data-reveal id="filmstrip"><div class="film-track" id="filmTrack">
+      <div class="film-item film-item-video">
+        <div class="frame">
+          <video autoplay muted loop playsinline>
+            <source src="assets/hero.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="cap">Кабината во живо</div>
+      </div>
+
+      <div class="film-item">
+        <div class="frame"><img src="assets/img-006.jpg" alt="Монтажа на конструкцијата"></div>
+        <div class="cap">Составување на лице место</div>
+      </div>
+      <div class="film-item">
+        <div class="frame"><img src="assets/img-007.jpg" alt="Завршена конструкција со поставена навлака"></div>
+        <div class="cap">Навлака поставена и осветлена</div>
+      </div>
+      <div class="film-item">
+        <div class="frame"><img src="assets/img-008.jpg" alt="Гости позираат во кабината, стилско издание"></div>
+        <div class="cap">Стилско издание, во живо</div>
+      </div>
+      <div class="film-item">
+        <div class="frame"><img src="assets/img-002.jpg" alt="Дизајн на насловна страница за свадбено издание"></div>
+        <div class="cap">Дизајн на свадбено издание</div>
+      </div>
+      <div class="film-item">
+        <div class="frame"><img src="assets/img-004.jpg" alt="Дизајн на насловна страница за матурско издание"></div>
+        <div class="cap">Дизајн на матурско издание</div>
+      </div>
+
+      <div class="film-item">
+        <div class="frame"><img src="assets/img-009.jpg" alt="Гости пред кабината — Vogue издание"></div>
+        <div class="cap">Гости пред кабината</div>
+      </div>
+      <div class="film-item">
+        <div class="frame"><img src="assets/img-010.jpg" alt="Кабина на отворено — роденденско издание"></div>
+        <div class="cap">Роденденско издание</div>
+      </div>
+      <div class="film-item">
+        <div class="frame"><img src="assets/img-011.jpg" alt="Младоженци во кабината — свадбено издание"></div>
+        <div class="cap">Свадбено издание во живо</div>
+      </div>
+      <div class="film-item">
+        <div class="frame"><img src="assets/img-009.jpg" alt="Стилско издание со осветлување"></div>
+        <div class="cap">Стилско издание</div>
+      </div>
+      <div class="film-item">
+        <div class="frame"><img src="assets/img-012.png" alt="LET'S PARTY — стилско издание"></div>
+        <div class="cap">Let's Party издание</div>
+      </div>
+      <div class="film-item">
+        <div class="frame"><img src="assets/img-013.jpg" alt="Надворешен изглед на кабината"></div>
+        <div class="cap">Надворешен изглед</div>
+      </div>
+      <div class="film-item">
+        <div class="frame"><img src="assets/img-014.jpg" alt="Внатрешност на кабината"></div>
+        <div class="cap">Внатрешност</div>
+      </div>
+    </div><!-- /film-track -->
+
+
+    
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <h2>Цени</h2>
+      <p>Секој пакет вклучува достава доколку е Штип и околината, поставување. Печатењето и дополнителните часови се доплаќаат.</p>
+    </div>
+    <div class="pricing-grid" data-reveal>
+      <div class="price-card">
+        <div class="price-tag">Основен</div>
+        <h3>Насловна приказна</h3>
+        <div class="amount">6.500<span> МКД / 2 часа.</span></div>
+        <p>За помали собири на кои сепак сакаш момент за насловна страница.</p>
+        <ul>
+          <li>Едно издание на насловна страница по избор</li>
+          <li>За секој нареден час 1500ден.</li>
+          <li>Прилагодени насловни линии со имиња/датум се доплаќаат.</li>
+        </ul>
+        <a href="#book" class="btn btn-outline">Изберете Основен</a>
+      </div>
+      <div class="price-card featured">
+        <div class="price-tag">Најбарано</div>
+        <h3>Насловна приказна плус</h3>
+        <div class="amount">8.500<span> МКД / 4 часа</span></div>
+        <p>Најбараниот пакет — совршен за свадби, роденденски забави, дипломски, матурски, момачка, девојачка вечер.</p>
+        <ul>
+          <li>Едно издание на насловна страница по избор</li>
+          <li>За секој нареден час 1500ден.</li>
+          <li>Прилагодени насловни линии со имиња/датум се доплаќаат.</li>
+        </ul>
+        <a href="#book" class="btn btn-outline">Изберете го овој пакет</a>
+      </div>
+      <div class="price-card">
+        <div class="price-tag">Цел тираж</div>
+        <h3>Целото издание</h3>
+        <div class="amount">18.000<span> МКД / цел ден</span></div>
+        <p>За целодневни прослави и големи локации — совршен за свадби, роденденски забави, дипломски, матурски, момачка, девојачка вечер.</p>
+        <ul>
+          <li>Едно издание на насловна страница по избор или прилагоден дизајн на насловна страница.</li>
+          <li>Приоритетна резервација и поставување.</li>
+          <li>Достава до локацијата.</li>
+        </ul>
+        <a href="#book" class="btn btn-outline">Изберете Целото издание</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTES -->
+<section style="padding-top:0;">
+  <div class="wrap">
+    <div class="quotes" data-reveal>
+      <div class="quote">
+        <p class="q">„Редот за кабината беше подолг од редот за шанкот. Најдобрата одлука што ја донесовме за свадбата."</p>
+        <div class="who">— Вистински коментар, парафразиран</div>
+      </div>
+      <div class="quote">
+        <p class="q">„Секој гостин на матурата на мојата ќерка си замина со фотографија за насловна страница. Се чувствуваше како вистински настан, не само фото-агол."</p>
+        <div class="who">— Вистински коментар, парафразиран</div>
+      </div>
+      <div class="quote">
+        <p class="q">„Поставувањето беше брзо, тимот се погрижи за сè, а галеријата беше во нашето сандаче наредната утро."</p>
+        <div class="who">— Вистински коментар, парафразиран</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOOK -->
+<section id="book">
+  <div class="wrap">
+    <div class="book" data-reveal>
+      <div>
+        <div class="eyebrow" style="color:var(--gold-soft);">Резервација</div>
+        <h2 style="margin-top:18px;">Резервирај си го датумот за насловна страница</h2>
+        <p>Кажи ни за настанот, датумот и кое издание го замислуваш. Ние ја потврдуваме достапноста и испраќаме понуда во рок од еден ден.</p>
+        <div class="book-contact">
+          <a href="tel:+38977769944">077/769-944</a>
+          <a href="mailto:jovanovboris@yahoo.com">jovanovboris@yahoo.com</a>
+          <a href="https://instagram.com" target="_blank" rel="noopener">@photoboxstory.mk</a>
+          <a href="#" style="border:none;color:#a89f8c;">Штип · услуга низ цела Северна Македонија</a>
+        </div>
+      </div>
+      <form id="bookForm" onsubmit="return sendReservation(event)">
+        <div class="field">
+          <label for="name">Твоето име</label>
+          <input id="name" type="text" name="name" placeholder="Целосно име" required>
+        </div>
+        <div class="field">
+          <label for="event">Тип на настан</label>
+          <select id="event" name="event">
+            <option>Свадба</option>
+            <option>Роденден</option>
+            <option>Матура</option>
+            <option>Стил / Фирмена забава</option>
+            <option>Друго</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Датум на настанот</label>
+          <div class="date-row">
+            <select id="day" name="day" required>
+              <option value="">Ден</option>
+              <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+              <option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
+              <option>11</option><option>12</option><option>13</option><option>14</option><option>15</option>
+              <option>16</option><option>17</option><option>18</option><option>19</option><option>20</option>
+              <option>21</option><option>22</option><option>23</option><option>24</option><option>25</option>
+              <option>26</option><option>27</option><option>28</option><option>29</option><option>30</option>
+              <option>31</option>
+            </select>
+            <select id="month" name="month" required>
+              <option value="">Месец</option>
+              <option value="1">Јануари</option>
+              <option value="2">Февруари</option>
+              <option value="3">Март</option>
+              <option value="4">Април</option>
+              <option value="5">Мај</option>
+              <option value="6">Јуни</option>
+              <option value="7">Јули</option>
+              <option value="8">Август</option>
+              <option value="9">Септември</option>
+              <option value="10">Октомври</option>
+              <option value="11">Ноември</option>
+              <option value="12">Декември</option>
+            </select>
+            <select id="year" name="year" required>
+              <option value="">Година</option>
+              <option>2026</option>
+              <option>2027</option>
+              <option>2028</option>
+              <option>2029</option>
+              <option>2030</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="msg">Дополнителни детали</label>
+          <textarea id="msg" name="msg" rows="3" placeholder="Локација, број на гости, преферирано издание..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-solid">Испрати барање за резервација</button>
+        <p class="confirm" id="formConfirm" style="display:none;margin-top:14px;color:var(--gold-soft);font-family:var(--mono);font-size:12px;">Се отвора твојот мејл… испрати ја пораката за да стигне барањето.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-row">
+      <div class="logo">PHOTOBOX<span>STORY</span></div>
+      <div class="foot-links">
+        <a href="#editions">Изданија</a>
+        <a href="#how">Како функционира</a>
+        <a href="#gallery">Кабината</a>
+        <a href="#pricing">Цени</a>
+        <a href="#book">Резервација</a>
+      </div>
+    </div>
+    <div class="foot-fine">© 2026 PhotoBox Story — Изнајмување фото-кабина, Штип, Северна Македонија. Сите права задржани. Пример содржина — замени ги цените, контактите и коментарите пред објавување.</div>
+  </div>
+</footer>
+
+<script>
+  // hero cover crossfade
+  (function(){
+    var imgs = document.querySelectorAll('#coverStage img');
+    var i = 0;
+    if(imgs.length > 1){
+      setInterval(function(){
+        imgs[i].classList.remove('active');
+        i = (i+1) % imgs.length;
+        imgs[i].classList.add('active');
+      }, 3200);
+    }
+  })();
+
+  // scroll reveal
+  (function(){
+    var els = document.querySelectorAll('[data-reveal]');
+    if(!('IntersectionObserver' in window)){
+      els.forEach(function(e){e.classList.add('in');});
+      return;
+    }
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          entry.target.classList.add('in');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, {threshold:0.15});
+    els.forEach(function(e){obs.observe(e);});
+  })();
+</script>
+
+
+<script>
+function sendReservation(e){
+  e.preventDefault();
+  var name = document.getElementById('name').value.trim();
+  var eventType = document.getElementById('event').value;
+  var day = document.getElementById('day').value;
+  var month = document.getElementById('month').value;
+  var year = document.getElementById('year').value;
+  var date = (day && month && year) ? (day + '.' + month + '.' + year) : 'не е наведен';
+  var msg = document.getElementById('msg').value.trim();
+  var subject = encodeURIComponent('Ново барање за резервација — PhotoBox Story');
+  var body = encodeURIComponent(
+    'Име: ' + name + '\n' +
+    'Тип на настан: ' + eventType + '\n' +
+    'Датум: ' + date + '\n' +
+    'Детали: ' + (msg || '-') + '\n'
+  );
+  window.location.href = 'mailto:jovanovboris@yahoo.com?subject=' + subject + '&body=' + body;
+  document.getElementById('formConfirm').style.display = 'block';
+  return false;
+}
+</script>
+
+
+<script>
+(function(){
+  var track = document.getElementById('filmTrack');
+  if(!track) return;
+  var kids = Array.prototype.slice.call(track.children);
+  kids.forEach(function(ch){ track.appendChild(ch.cloneNode(true)); });
+})();
+</script>
+
+</body>
+</html>
