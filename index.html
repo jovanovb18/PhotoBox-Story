@@ -304,6 +304,17 @@
   .price-card{
     padding:44px 34px;border-right:1px solid var(--ink);position:relative;
   }
+  @media (max-width:640px){
+    .price-card{padding:34px 24px;}
+    .price-card .btn{
+      display:flex;
+      width:100%;
+      justify-content:center;
+      padding:13px 18px;
+      font-size:11px;
+      letter-spacing:.06em;
+    }
+  }
   .price-card:last-child{border-right:none;}
   .price-card.featured{background:var(--ink);color:var(--paper);}
   .price-card.featured p{color:#cfc7b8;}
